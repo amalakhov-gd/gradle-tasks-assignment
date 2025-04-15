@@ -6,10 +6,16 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 tasks.register<Delete>("clean") {
+    group = tasksGroup
+    description = "Clean build directory"
+
     delete(layout.buildDirectory)
 }
 
 tasks.register("sortFiles") {
+    group = tasksGroup
+    description = "Sorts files in given directory into build.files subdirectories based on the sorting type [creationDate,extension]"
+
     val filesFolder = project.property("tasks.files.folder") as String
     val sortType = getSortingType(project)
     val outputDirectory = layout.buildDirectory.dir("files").get()
@@ -64,4 +70,5 @@ enum class SortingType(val value: String) {
     EXTENSION("extension"),
 }
 
+private val tasksGroup = "Files"
 private val SORT_TYPE_PROPERTY = "tasks.files.sortType"
