@@ -31,6 +31,7 @@ tasks.register("sortFiles") {
                 val sortDirectory = when (sortType) {
                     SortingType.CREATION_DATE -> getDateDirectory(file)
                     SortingType.EXTENSION -> getExtensionDirectory(file)
+                    SortingType.ALPHABET -> getAlphabetDirectory(file)
                 }
                 val directory = outputDirectory.dir(sortDirectory)
                 mkdir(directory)
@@ -47,6 +48,7 @@ private fun getSortingType(project: Project): SortingType {
         SortingType.CREATION_DATE.value -> SortingType.CREATION_DATE
 
         SortingType.EXTENSION.value -> SortingType.EXTENSION
+        SortingType.ALPHABET.value -> SortingType.ALPHABET
         else -> {
             throw InvalidUserDataException("Invalid property `${sortTypeProperty}`. Valid values are: [${SortingType.values().joinToString { "'${it.value}'" }}]. value provided")
         }
@@ -66,9 +68,14 @@ private fun getExtensionDirectory(file: File): String {
     return file.extension
 }
 
+private fun getAlphabetDirectory(file: File): String {
+    return file.name.first().toString()
+}
+
 enum class SortingType(val value: String) {
     CREATION_DATE("creationDate"),
     EXTENSION("extension"),
+    ALPHABET("alphabet"),
 }
 
 private val tasksGroup = "Files"
