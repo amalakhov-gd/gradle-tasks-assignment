@@ -11,9 +11,19 @@ import java.time.format.DateTimeFormatter
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
 
-open class SortFilesTask : DefaultTask() {
+abstract class SortFilesTask : DefaultTask() {
+
+    @get:InputDirectory
+    abstract val filesFolder: DirectoryProperty
+
+    @get:Input
+    abstract val sortType: Property<String>
 
     init {
         group = SortFilesPlugin.TASK_GROUP_FILES
@@ -22,14 +32,13 @@ open class SortFilesTask : DefaultTask() {
 
     @TaskAction
     fun sortFiles() {
-        val filesFolder = project.property(PROPERTY_FILES_FOLDER) as String
         val sortType = getSortingType()
         val outputDirectoryRoot = project.layout.buildDirectory.dir("files").get()
 
-        project.layout.projectDirectory.dir(filesFolder)
-            .asFileTree
-            .files
-            .forEach { file ->
+        filesFolder.get()
+            .asFile
+            .listFiles()
+            ?.forEach { file ->
                 val outputDirectory = getOutputDirectory(sortType, file, outputDirectoryRoot)
                 copyFile(file, outputDirectory)
             }
@@ -52,15 +61,14 @@ open class SortFilesTask : DefaultTask() {
     }
 
     private fun getSortingType(): SortingType {
-        val sortType = project.findProperty(PROPERTY_SORT_TYPE) as String?
-        return when (sortType) {
+        return when (sortType.get()) {
             null,
             SortingType.CREATION_DATE.value -> SortingType.CREATION_DATE
 
             SortingType.EXTENSION.value -> SortingType.EXTENSION
             SortingType.ALPHABET.value -> SortingType.ALPHABET
             else -> {
-                throw InvalidUserDataException("Invalid property `${PROPERTY_SORT_TYPE}`. Valid values are: [${SortingType.entries.joinToString { "'${it.value}'" }}]. value provided")
+                throw InvalidUserDataException("Invalid property `sortType`. Valid values are: [${SortingType.entries.joinToString { "'${it.value}'" }}]. value provided")
             }
         }
     }
@@ -80,11 +88,5 @@ open class SortFilesTask : DefaultTask() {
 
     private fun getAlphabetDirectory(file: File): String {
         return file.name.first().toString()
-    }
-
-    companion object {
-
-        private const val PROPERTY_FILES_FOLDER = "tasks.files.folder"
-        private const val PROPERTY_SORT_TYPE = "tasks.files.sortType"
     }
 }

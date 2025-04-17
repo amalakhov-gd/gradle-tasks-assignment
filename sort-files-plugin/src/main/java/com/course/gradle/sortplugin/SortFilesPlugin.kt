@@ -1,6 +1,7 @@
 package com.course.gradle.sortplugin
 
 import com.course.gradle.sortplugin.tasks.clean.CleanTask
+import com.course.gradle.sortplugin.tasks.sortfiles.SortFilesExtension
 import com.course.gradle.sortplugin.tasks.sortfiles.SortFilesTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -12,9 +13,12 @@ class SortFilesPlugin : Plugin<Project> {
             project.tasks.register(CLEAN_TASK_NAME, CleanTask::class.java)
         }
 
+        val sortFiles = project.extensions.create("sortFiles", SortFilesExtension::class.java)
         project.tasks.register("sortFiles", SortFilesTask::class.java)
             .configure {
                 it.dependsOn(CLEAN_TASK_NAME)
+                it.filesFolder.set(project.layout.projectDirectory.dir(sortFiles.filesFolder.get()))
+                it.sortType.set(sortFiles.sortType)
             }
     }
 
