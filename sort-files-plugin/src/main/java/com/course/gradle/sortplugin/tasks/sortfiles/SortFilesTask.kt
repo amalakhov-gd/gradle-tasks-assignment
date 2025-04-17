@@ -15,6 +15,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 abstract class SortFilesTask : DefaultTask() {
@@ -25,6 +26,9 @@ abstract class SortFilesTask : DefaultTask() {
     @get:Input
     abstract val sortType: Property<String>
 
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
     init {
         group = SortFilesPlugin.TASK_GROUP_FILES
         description = "Sorts files in given directory into build.files subdirectories based on the sorting type [creationDate,extension]"
@@ -32,15 +36,16 @@ abstract class SortFilesTask : DefaultTask() {
 
     @TaskAction
     fun sortFiles() {
+        project.delete(outputDirectory)
+
         val sortType = getSortingType()
-        val outputDirectoryRoot = project.layout.buildDirectory.dir("files").get()
 
         filesFolder.get()
             .asFile
             .listFiles()
             ?.forEach { file ->
-                val outputDirectory = getOutputDirectory(sortType, file, outputDirectoryRoot)
-                copyFile(file, outputDirectory)
+                val sortDirectory = getOutputDirectory(sortType, file, outputDirectory.get())
+                copyFile(file, sortDirectory)
             }
     }
 

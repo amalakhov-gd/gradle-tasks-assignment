@@ -15,10 +15,10 @@ class SortFilesPlugin : Plugin<Project> {
 
         val sortFiles = project.extensions.create("sortFiles", SortFilesExtension::class.java)
         project.tasks.register("sortFiles", SortFilesTask::class.java)
-            .configure {
-                it.dependsOn(CLEAN_TASK_NAME)
-                it.filesFolder.set(project.layout.projectDirectory.dir(sortFiles.filesFolder.get()))
-                it.sortType.set(sortFiles.sortType)
+            .configure { task ->
+                task.filesFolder.set(project.layout.projectDirectory.dir(sortFiles.filesFolder.get()))
+                task.sortType.set(sortFiles.sortType)
+                task.outputDirectory.set(project.file(project.layout.buildDirectory.dir(SORT_FILES_OUTPUT_FOLDER)))
             }
     }
 
@@ -26,5 +26,6 @@ class SortFilesPlugin : Plugin<Project> {
 
         internal const val TASK_GROUP_FILES = "Files"
         private const val CLEAN_TASK_NAME = "clean"
+        private const val SORT_FILES_OUTPUT_FOLDER = "files"
     }
 }
