@@ -1,3 +1,5 @@
 pluginManagement {
-    includeBuild("../sort-files-plugin")
+    repositories {
+        mavenLocal()
+    }
 }

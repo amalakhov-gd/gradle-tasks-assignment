@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        mavenLocal()
         gradlePluginPortal()
         mavenCentral()
     }
@@ -11,6 +12,5 @@ dependencyResolutionManagement {
     }
 }
 
-// todo uncomment after testing
-// include(":sort-files-plugin")
-includeBuild("app")
+include(":app")
+include(":sort-files-plugin")

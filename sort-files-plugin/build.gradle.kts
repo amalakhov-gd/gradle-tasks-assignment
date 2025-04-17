@@ -1,7 +1,11 @@
 plugins {
     id("java-gradle-plugin")
     kotlin("jvm") version "2.1.20"
+    `maven-publish`
 }
+
+group = "com.course.gradle"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
