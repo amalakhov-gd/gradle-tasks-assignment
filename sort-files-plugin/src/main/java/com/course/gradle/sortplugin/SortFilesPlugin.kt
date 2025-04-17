@@ -5,11 +5,12 @@ import com.course.gradle.sortplugin.tasks.sortfiles.SortFilesTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-
 class SortFilesPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.tasks.register(CLEAN_TASK_NAME, CleanTask::class.java)
+        if (project.tasks.findByName(CLEAN_TASK_NAME) == null) {
+            project.tasks.register(CLEAN_TASK_NAME, CleanTask::class.java)
+        }
 
         project.tasks.register("sortFiles", SortFilesTask::class.java)
             .configure {
