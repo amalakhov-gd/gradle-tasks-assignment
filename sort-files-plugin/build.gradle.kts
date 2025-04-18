@@ -37,5 +37,24 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
         }
+
+        register<JvmTestSuite>("functionalTest") {
+            dependencies {
+                implementation(project())
+                implementation(gradleTestKit())
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
     }
+}
+
+tasks.named("check") {
+    dependsOn(testing.suites.named("functionalTest"))
 }
