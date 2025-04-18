@@ -2,6 +2,7 @@ plugins {
     id("java-gradle-plugin")
     kotlin("jvm") version "2.1.20"
     `maven-publish`
+    `jvm-test-suite`
 }
 
 group = "com.course.gradle"
@@ -27,6 +28,14 @@ gradlePlugin {
         create("sortPlugin") {
             id = "com.course.gradle.sort-plugin"
             implementationClass = "com.course.gradle.sortplugin.SortFilesPlugin"
+        }
+    }
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
         }
     }
 }

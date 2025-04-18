@@ -1,6 +1,7 @@
 package com.course.gradle.sortplugin.tasks.sortfiles
 
 import com.course.gradle.sortplugin.SortFilesPlugin
+import com.course.gradle.sortplugin.tasks.sortfiles.mapping.AlphabetDirectoryMapper
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -92,6 +93,7 @@ abstract class SortFilesTask : DefaultTask() {
     }
 
     private fun getAlphabetDirectory(file: File): String {
-        return file.name.first().toString()
+        val mapper = AlphabetDirectoryMapper()
+        return mapper.getDirectory(file)
     }
 }
